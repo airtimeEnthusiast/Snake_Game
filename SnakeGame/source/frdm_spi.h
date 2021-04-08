@@ -17,6 +17,7 @@
 #include "fsl_debug_console.h"
 #include "fsl_device_registers.h"
 
+
 #ifndef FRDM_I2C_H_
 #define FRDM_I2C_H_
 

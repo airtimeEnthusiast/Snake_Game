@@ -17,6 +17,7 @@
  BUTTON4: Port C bit 7
  */
 
+
 /**
  * @file    StopLightGameMain.c
  * @brief   Application entry point.
