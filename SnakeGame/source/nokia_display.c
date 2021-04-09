@@ -4,10 +4,6 @@
  *  Created on: Mar 19, 2021
  *      Author: austinwright
  *
- *
- *
- *
- *
  *      NOTES:
  *
 		//SPI_transmit(0x14);	//Recommended Bias of 0x04
@@ -15,27 +11,20 @@
 #include "nokia_display.h"
 #include "frdm_spi.h"
 
-
 /* -----------------------------------------------------------------*/
-/* 	Initialize this bad@$$ Nokia display
+/* 	Initialize this bad@$$ Nokia display with the following steps
+ * 1. Command mode (D/~C) low
+ * 2. Briefly allow for extended instruction set
+ * 3. Set the display contrast (VOP)
+ * 4. Return to normal instruction mode
+ * 5. Set the display to normal mode
+ */
 /* -----------------------------------------------------------------*/
 void init_5110(){
 
-	//RES_Pulse();
-    GPIOD->PDOR |= ~(1<<2);	//SCE high
-    delay_ms(1);
+	RES_Pulse();
 
-    GPIOD->PDOR &= ~(1<<4); //RST Low
-    delay_ms(500);
-
-    GPIOD->PDOR |= (1<<4); //RST High
-    delay_ms(1);
-
-    GPIOD->PDOR &= ~(1<<2); //SCE is going LOW
-
-
-
-	//Command mode
+	//Command mode (Setup for transmission)
 	GPIOD->PDOR &= ~(1<<7);
 
     //Set function set for extended instructions
@@ -47,7 +36,7 @@ void init_5110(){
 	delay_ms(1);
 
 	//Set VOP contrast
-	SPI_transmit(0x90);
+	SPI_transmit(0x10);
 	delay_ms(1);
 
 	//Set normal instruction mode
@@ -58,67 +47,72 @@ void init_5110(){
 	SPI_transmit(0xC);
 	delay_ms(1);
 
-	//Data mode
-	GPIOD->PDOR |= (1<<7);
+	clearDisplay();
 
-	//Write dummy data
-	SPI_transmit(0x1F);
 
-	//Reset_Function();
-    //Function_Set();
+	for(int j = 0 ; j < 83 ; j++){
+		SPI_transmit(0x1F); //fill column
+	}
+		SPI_transmit(0x80);			//reset x address
+		SPI_transmit(0x40);			//reset y address
+
+	for(int k = 0 ; k <= 83 ; k++){
+			SPI_transmit(0x0); //clear column
+	}
+	delay_ms(100);
+}
+/* -----------------------------------------------------------------*/
+/* 	Set a pixel man!
+/* -----------------------------------------------------------------*/
+void setPixel(int x, int y){
 
 }
-
 /* -----------------------------------------------------------------*/
-/* 	//Apply RES pulse 8.1
+/* 	Clean them artifacts man
+/* -----------------------------------------------------------------*/
+void clearDisplay(){
+
+	GPIOD->PDOR &= ~(1<<7);			//Go to command mode
+	SPI_transmit(0x80);				//reset x address
+	SPI_transmit(0x40);				//reset y address
+
+	GPIOD->PDOR |= (1<<7);			//Go to data mode
+	for(int i = 0 ; i < 504 ; i++){
+		SPI_transmit(0x0); 			//clear next column
+	}
+	GPIOD->PDOR &= ~(1<<7);
+	SPI_transmit(0x80);				//reset x address
+	SPI_transmit(0x40);				//reset y address
+
+	delay_ms(1);
+}
+/* -----------------------------------------------------------------*/
+/* 	Apply RES pulse 8.1 Figure 13
 /* -----------------------------------------------------------------*/
 void RES_Pulse(){
-	GPIOD->PDOR &= ~(1<<2);	//SCE low
-	GPIOD->PDOR &= ~(1<<4);	//RST low
-	delay_ms(10);
-	GPIOD->PDOR |= (1<<4);	//RST high
-	delay_ms(10);
+	GPIOD->PDOR |= (1<<2);	//SCE high
+	delay_ms(1);
+
+	GPIOD->PDOR &= ~(1<<2); //SCE LOW (listen for transmission)
+	delay_ms(500);
+
+	GPIOD->PDOR &= ~(1<<4); //RST (RES) Low
+	delay_ms(500);
+
+	GPIOD->PDOR |= (1<<4); //RST (RES) High
+	delay_ms(1);
 }
-
-void Reset_Function(){
-//RESET function (Step 8.2)
-
-	//Command mode
-	GPIOD->PDOR &= ~(1<<7);
-
-	//Power-down high: Entry mode and Set control low
-	SPI_transmit(0x24);	//Horizontal addressing, normal instruction set
-
-	//Display blank
-	SPI_transmit(0x8);	//bit E = D = 0
-
-	// Zero out Address counters
-	SPI_transmit(0x40);	//y address set to 0
-	SPI_transmit(0x80);	//x address set to 0 and shut off HV generator
-
-	//Temperature control mode
-	SPI_transmit(0x4);	//TC1 and TC0 =0
-
-	//Zero out bias system
-	SPI_transmit(0x10);	//BS0 to BS2 = 0
-
-	//Power on PCD844 "Chip"
-	SPI_transmit(0x20);
-}
-void Function_Set(){
-	//Function set (Step 8.4-8.8)
-
-	//Display Control set to normal
-	SPI_transmit(0xC);
-
-	//Set VOP contrast
-	SPI_transmit(0x90);
-
-
-	SPI_transmit(0x40);	//y address set to 0
-	SPI_transmit(0x80);	//x address set to 0
-
-
+/* -----------------------------------------------------------------*/
+/* 	Apply RES pulse 8.1 Figure 13
+/* -----------------------------------------------------------------*/
+void Reset_Serial(){
+	//Reset Serial Bus
+    GPIOD->PDOR &= ~(1<<2); //SCE LOW (listen for transmission)
+    delay_ms(500);
+	GPIOD->PDOR &= ~(1<<4); //RST (RES) High
+	delay_ms(1);
+    GPIOD->PDOR |= (1<<4); 	//RST (RES) High
+    delay_ms(1);
 }
 
 

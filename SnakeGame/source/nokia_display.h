@@ -44,4 +44,19 @@ void Function_Set();
 /* -----------------------------------------------------------------*/
 void Display_Control();
 
+
+/* -----------------------------------------------------------------*/
+/* 	Initialize the PCD8544 on-board display chip. See the Nokia5110
+ *  Data sheet for section and page reference
+ *  See Page 15 of the Nokia data sheet for Intialization steps
+/* -----------------------------------------------------------------*/
+void setPixel(int x, int y);
+
+/* -----------------------------------------------------------------*/
+/* 	Initialize the PCD8544 on-board display chip. See the Nokia5110
+ *  Data sheet for section and page reference
+ *  See Page 15 of the Nokia data sheet for Intialization steps
+/* -----------------------------------------------------------------*/
+void clearDisplay();
+
 #endif /* NOKIA_DISPLAY_H_ */
