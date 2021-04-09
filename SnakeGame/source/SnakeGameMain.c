@@ -38,13 +38,56 @@ int main (void)
     SPI_init();    	//Initialize SPI0
     init_5110(); 	//Initialize 5110
 
-    // 7.7 instruction: function set + display control + y address + x address
+    //dummyData_Test();
+    dummyPixel_Test();
 
 
 
     return 0;
 }
 
+
+void dummyData_Test(){
+	///Dummy Data Test
+	int dummy = 1; //255 (fills the whole bank);
+	for(int k = 0 ; k < 8 ; k++){
+		printf("\nRow %d : dummy: %d",k,dummy);
+		//Dummy Bar Write Test
+		GPIOD->PDOR |= (1<<7);
+		for(int j = 0 ; j < 84 ; j++){	//fill all column in next row
+			SPI_transmit(dummy); //fill next column
+			delay_ms(9);
+		}
+
+		//Reset Address
+		GPIOD->PDOR &= ~(1<<7);
+		SPI_transmit(0x80);
+		SPI_transmit(0x40);
+		dummy = dummy | (dummy<<1);
+	}
+	delay_ms(1000);
+	//Clear_Entire_Display();
+}
+
+void dummyPixel_Test(){
+
+	GPIOD->PDOR &= ~(1<<7);
+	//Set X and Y address
+	SPI_transmit(0xD3); //Set X address to 83 (last column (0xD3))
+	SPI_transmit(0x45); // Set Y address to 5 (last row (0x45))
+
+	GPIOD->PDOR |= (1<<7);
+	SPI_transmit(0x80);	//Fill all of the rows in this column
+
+	//Pixel 504 = 84 * 6
+
+	//Lazy bone approach would be a counter value <= 504
+	//Loop through each pixel till you get the counter value
+
+	int x =
+
+
+}
 
 /* -----------------------------------------------------------------*/
 /* 	game function
