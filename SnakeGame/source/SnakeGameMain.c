@@ -39,7 +39,8 @@ int main (void)
     init_5110(); 	//Initialize 5110
 
     //dummyData_Test();
-    dummyPixel_Test();
+    //dummyPixel_Test();
+    Set_Pixel(83,47);
 
 
 
@@ -83,9 +84,6 @@ void dummyPixel_Test(){
 
 	//Lazy bone approach would be a counter value <= 504
 	//Loop through each pixel till you get the counter value
-
-	int x =
-
 
 }
 

@@ -15,6 +15,10 @@
 #define LCDWIDTH 84
 #define LCDHEIGHT 48
 
+#ifndef _BV
+#define _BV(x) (1 << (x)) ///< Mask for bit position x
+#endif
+
 /** the memory buffer for the LCD */
 uint8_t display_buffer[LCDWIDTH * LCDHEIGHT / 8] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -99,6 +103,12 @@ void init_5110(){
 /* 	Set a pixel man!
 /* -----------------------------------------------------------------*/
 void Set_Pixel(int x, int y){
+	if ((x < 0) || (x >= LCDWIDTH) || (y < 0) || (y >= LCDHEIGHT)){
+		return;
+	}
+
+	//Getting the pixel value
+	printf("\nPixel %d", x + (y / 8) * LCDWIDTH);
 
 	Zero_Cursor_Address();	// Zero out address
 
