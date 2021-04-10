@@ -102,13 +102,57 @@ void init_5110(){
 /* -----------------------------------------------------------------*/
 /* 	Set a pixel man!
 /* -----------------------------------------------------------------*/
-void Set_Pixel(int x, int y){
+void Set_Pixel(int x, int y,int enable){
+
 	if ((x < 0) || (x >= LCDWIDTH) || (y < 0) || (y >= LCDHEIGHT)){
 		return;
 	}
 
 	//Getting the pixel value
-	printf("\nPixel %d", x + (y / 8) * LCDWIDTH);
+	printf("\nPixel %d\n", x + (y / 8) * LCDWIDTH);
+
+	display_buffer[x + (y / 8) * LCDWIDTH] = enable;
+
+
+	//Command mode
+	GPIOD->PDOR &= ~(1<<7);
+	//Given the pixel value calculate the address
+	SPI_transmit(0x80 + x);		//offset x address
+
+	//y offset calc
+	// (y_coord / 6)
+
+	// transmit value: (y_coord % 8) or smt
+
+
+
+	/*int count = 0;
+	int buffer = 1;
+	//Each Bank
+	for(int i = 0 ; i < 6 ; i++){
+		//Every bank row
+		for(int k = 0 ; k < 8 ; k++){
+			//Every bank column
+			for(int j = 0 ; j < 84 ; j++){
+				buffer = (buffer<<1);
+				count++;
+				SPI_transmit(0);
+				printf("\ncount: %d\nbuffer: %d\n\n",count);
+				if(count == (x + (y / 8) * LCDWIDTH)){
+					GPIOD->PDOR |= (1<<7);
+					SPI_transmit(1);
+					printf("\ntransmit buffer");
+					return;
+				}
+			}
+			buffer = 1;
+			//Reset Address
+			GPIOD->PDOR &= ~(1<<7);
+			SPI_transmit(0x80);
+			SPI_transmit(0x40 + i);
+		}
+	}*
+
 
 	Zero_Cursor_Address();	// Zero out address
 

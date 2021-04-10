@@ -40,8 +40,8 @@ int main (void)
 
     //dummyData_Test();
     //dummyPixel_Test();
-    Set_Pixel(83,47);
-
+    //Set_Pixel(83,47, 1);
+    Set_Pixel(8,4, 1);
 
 
     return 0;
@@ -64,10 +64,32 @@ void dummyData_Test(){
 		GPIOD->PDOR &= ~(1<<7);
 		SPI_transmit(0x80);
 		SPI_transmit(0x40);
-		dummy = dummy | (dummy<<1);
+		dummy = dummy | (dummy<<1); //shift into the next row within the bank
 	}
 	delay_ms(1000);
-	//Clear_Entire_Display();
+	Clear_Entire_Display();
+	dummy = 1;
+
+	//Each Bank
+	for(int i = 0 ; i < 6 ; i++){
+		//Every bank row
+		for(int k = 0 ; k < 8 ; k++){
+			//Every bank column
+			GPIOD->PDOR |= (1<<7);
+			for(int j = 0 ; j < 84 ; j++){
+				SPI_transmit(dummy);
+			}
+			//Reset Address
+			GPIOD->PDOR &= ~(1<<7);
+			SPI_transmit(0x80);
+			SPI_transmit(0x40 + i);
+			dummy = dummy | (dummy<<1); //shift into the next row within the bank
+		}
+		printf("\nReset Enable to original val");
+		//dummy = 0xF;
+	}
+
+
 }
 
 void dummyPixel_Test(){
@@ -81,9 +103,6 @@ void dummyPixel_Test(){
 	SPI_transmit(0x80);	//Fill all of the rows in this column
 
 	//Pixel 504 = 84 * 6
-
-	//Lazy bone approach would be a counter value <= 504
-	//Loop through each pixel till you get the counter value
 
 }
 
