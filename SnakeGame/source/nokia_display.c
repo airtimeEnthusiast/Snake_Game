@@ -159,7 +159,7 @@ void Set_Pixel(int x, int y,int enable){
 	GPIOD->PDOR |= (1<<7); // Command mode
 
 
-	GPIOD->PDOR |= (1<<7); // Data mode
+	GPIOD->PDOR |= (1<<7); // Data mode*/
 
 }
 /* -----------------------------------------------------------------*/
