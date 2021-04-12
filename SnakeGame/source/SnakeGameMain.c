@@ -38,11 +38,17 @@ int main (void)
     SPI_init();    	//Initialize SPI0
     init_5110(); 	//Initialize 5110
 
-    //dummyData_Test();
-    //dummyPixel_Test();
-    //Set_Pixel(83,47, 1);
-    Set_Pixel(8,4, 1);
+    for(int j = 0 ; j < 48 ; j++){
+    	for(int i = 0 ; i < 83 ; i++){
+    		Set_Pixel(i,j,1);
+    	}
+    }
 
+    for(int j = 0 ; j < 48 ; j++){
+       	for(int i = 0 ; i < 83 ; i++){
+       		Set_Pixel(i,j,0);
+       	}
+       }
 
     return 0;
 }

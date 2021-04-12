@@ -27,6 +27,12 @@ void init_5110();
  *  Data sheet for section and page reference
  *  See Page 15 of the Nokia data sheet for Intialization steps
 /* -----------------------------------------------------------------*/
+int Bank_Select(int yCoord);
+/* -----------------------------------------------------------------*/
+/* 	Initialize the PCD8544 on-board display chip. See the Nokia5110
+ *  Data sheet for section and page reference
+ *  See Page 15 of the Nokia data sheet for Intialization steps
+/* -----------------------------------------------------------------*/
 void Set_Pixel(int x, int y, int enable);
 
 /* -----------------------------------------------------------------*/
