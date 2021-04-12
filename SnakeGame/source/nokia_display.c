@@ -111,18 +111,27 @@ void print_buffer(){
 /* -----------------------------------------------------------------*/
 /* 	Set a pixel man!
 /* -----------------------------------------------------------------*/
-void Set_Pixel(int x, int y,int enable){
+void Set_Pixel(int x, int y, int enable){
+	//The value to be set into the display buffer
+	uint8_t bitValue = 0;
 
 	//if pixel value is not within a legal display address
 	if ((x < 0) || (x >= LCDWIDTH) || (y < 0) || (y >= LCDHEIGHT)){
 		return;
 	}
 
-	//enable bit map buffer value
-	uint8_t bitValue = _BV(y % 8) | d_buffer[x + (y / 8) * LCDWIDTH]; //Bank value OR buffer
-	d_buffer[x + (y / 8) * LCDWIDTH] = bitValue;
+	//enable bit map buffer pixel
+	if(enable == 1){
+		bitValue = (_BV(y % 8) | d_buffer[x + (y / 8) * LCDWIDTH]); //Bank value OR buffer
+	}
 
-	//printf("buffer offset: %d       bit value: %d\n", x + (y / 8) * LCDWIDTH,bitValue);
+	//disable bit map buffer pixel
+	else{
+		bitValue = (_BV(y % 8) ^ d_buffer[x + (y / 8) * LCDWIDTH]); //Bank value OR buffer
+	}
+
+	//Set bit value within the display buffer
+	d_buffer[x + (y / 8) * LCDWIDTH] = bitValue;
 
 	//Command mode
 	GPIOD->PDOR &= ~(1<<7);
@@ -135,6 +144,16 @@ void Set_Pixel(int x, int y,int enable){
 	GPIOD->PDOR |= (1<<7);
 	SPI_transmit(bitValue);
 
+}
+/* -----------------------------------------------------------------*/
+/* 	Returns 1 if a pixel is enabled and 0 if it is disabled
+/* -----------------------------------------------------------------*/
+int get_Pixel(int x, int y){
+	//if pixel value is not within a legal display address
+	if ((x < 0) || (x >= LCDWIDTH) || (y < 0) || (y >= LCDHEIGHT)){
+		return -1;			//out of range return -1
+	}
+	return (_BV(y % 8) & d_buffer[x + (y / 8) * LCDWIDTH]) >> (y % 8);  //return the desired pixel value
 }
 /* -----------------------------------------------------------------*/
 /* 	Clean them artifacts man
