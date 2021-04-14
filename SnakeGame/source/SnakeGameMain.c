@@ -48,17 +48,14 @@ int main (void)
 
 	init_SPI();    	//Initialize SPI0
     init_5110(); 	//Initialize 5110 display
-    init_LEDS();
-    init_SW();
-    init_PIT();
+    init_LEDS();	//Initialize LEDs
+    init_SW();		//Initialize Buttons
+    init_PIT();		//Initialize Periodic Interrupt Timer
 
-    STOP_PIT();
-    START_PIT();
+    STOP_PIT();		//Stop PIT for clean setup
+    START_PIT();	//Enable PIT functionality
 
-    blinkChoosenLED(2);
-    blinkChoosenLED(1);
-
-    init_Snake();
+    init_Snake();	//Load snake into a buffer
 
     while(1){}
 
