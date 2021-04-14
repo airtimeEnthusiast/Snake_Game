@@ -8,15 +8,27 @@
 #ifndef FRDM_GENERAL_PERIPHERALS_H_
 #define FRDM_GENERAL_PERIPHERALS_H_
 
-void PORTA_IRQHandler(void);
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "board.h"
+#include "peripherals.h"
+#include "pin_mux.h"
+#include "clock_config.h"
+#include "MKL46Z4.h"
+#include "fsl_debug_console.h"
+#include "fsl_device_registers.h"
+#include "snake_game_logic.h"
 
-void Analog_Random
+void init_LEDS();
 
-void Enable_LEDS();
+void init_SW();
 
-void Enable_SW();
+void init_PIT();
 
-void Inti_PIT();
+void STOP_PIT();
+
+void START_PIT();
 
 void blinkLoseSequence();
 
@@ -26,5 +38,10 @@ void blinkAngleLEDs(int angle);
 
 void blinkChoosenLED(int index);
 
+void PORTA_IRQHandler(void);
+
+void PIT_IRQHandler(void);
+
+int buttonPressed();
 
 #endif /* FRDM_GENERAL_PERIPHERALS_H_ */

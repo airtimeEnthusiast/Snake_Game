@@ -15,6 +15,7 @@
 void playGame();
 void move_snake(int direction);
 void add_fruit();
+void init_Snake();
 
 
 #endif /* SNAKE_GAME_LOGIC_H_ */

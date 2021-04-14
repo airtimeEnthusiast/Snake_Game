@@ -35,6 +35,7 @@ When integrating system modules
 #include "frdm_spi.h"
 #include "nokia_display.h"
 #include "snake_game_logic.h"
+#include "snake_buffer.h"
 /* -----------------------------------------------------------------*/
 /* 	main function
 /* -----------------------------------------------------------------*/
@@ -47,9 +48,23 @@ int main (void)
 
 	init_SPI();    	//Initialize SPI0
     init_5110(); 	//Initialize 5110 display
-    Enable_SW();
+    init_LEDS();
+    init_SW();
+    init_PIT();
 
-    dummyPixel_Test();
+    STOP_PIT();
+    START_PIT();
+
+    blinkChoosenLED(2);
+    blinkChoosenLED(1);
+
+    init_Snake();
+
+    while(1){}
+
+    return 0;
+
+    //dummyPixel_Test();
 
     return 0;
 }
