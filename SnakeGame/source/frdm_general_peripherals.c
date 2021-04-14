@@ -159,7 +159,7 @@ void PORTA_IRQHandler(void) {
 	}
 	delay_ms(20);
 
-	printf("\nInterupt Called");
+	//printf("\nInterupt Called");
 	// Clear ISF register bit (pg 194)
 	PORTA->PCR[4] |= (1 << 24);
 	PORTA->PCR[5] |= (1 << 24);
@@ -173,21 +173,15 @@ void PORTA_IRQHandler(void) {
 	//Select chosen value
 	if (S1 == 0) {
 		blinkChoosenLED(1);
-		return 1;		//LED 1
 	}
 	if (S2 == 0) {
 		blinkChoosenLED(2);
-		return 2;		//LED 2
 	}
 	if (S3 == 0) {
 		blinkChoosenLED(3);
-		return 3;		//LED 3
 	}
 	if (S4 == 0) {
 		blinkChoosenLED(4);
-		return 4;		//LED 4
-	} else {
-		return -1;
 	}
 }
 /* -----------------------------------------------------------------*/
@@ -204,7 +198,7 @@ void PIT_IRQHandler(void) {
 	if (PIT->CHANNEL[0].TFLG) { 		//Timer 0 triggered
 		PIT->CHANNEL[0].TFLG = 1;	//Reset Flag
 
-		blinkChoosenLED(1);
+		blinkChoosenLED(4);
 	}
 
 }
@@ -219,6 +213,7 @@ int buttonPressed() {
 	int S4 = GPIOA->PDIR & (1 << 13);
 	//Select chosen value
 	if (S1 == 0 | S2 == 0 | S3 == 0 | S3 == 0 | S4 == 0) {
+		//printf("\nButton Pressed");
 		return 1;
 	} else {
 		return -1;
