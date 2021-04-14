@@ -100,7 +100,7 @@ int Bank_Select(int yCoord){
 /* -----------------------------------------------------------------*/
 /* 	Select a bank based on y coordinate range!
 /* -----------------------------------------------------------------*/
-void print_buffer(){
+void Print_buffer(){
 	for(int j = 0 ; j < 6 ; j++){
 		for(int i = 0 ; i < 83 ; i++){
 			printf("%d,",d_buffer[(j * 84) + i]);
@@ -143,12 +143,11 @@ void Set_Pixel(int x, int y, int enable){
 	//write pixel into display
 	GPIOD->PDOR |= (1<<7);
 	SPI_transmit(bitValue);
-
 }
 /* -----------------------------------------------------------------*/
 /* 	Returns 1 if a pixel is enabled and 0 if it is disabled
 /* -----------------------------------------------------------------*/
-int get_Pixel(int x, int y){
+int Get_Pixel(int x, int y){
 	//if pixel value is not within a legal display address
 	if ((x < 0) || (x >= LCDWIDTH) || (y < 0) || (y >= LCDHEIGHT)){
 		return -1;			//out of range return -1

@@ -8,10 +8,15 @@
 #ifndef FRDM_GENERAL_PERIPHERALS_H_
 #define FRDM_GENERAL_PERIPHERALS_H_
 
+void PORTA_IRQHandler(void);
+
+void Analog_Random
 
 void Enable_LEDS();
 
 void Enable_SW();
+
+void Inti_PIT();
 
 void blinkLoseSequence();
 

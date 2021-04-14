@@ -4,17 +4,6 @@
  *  Created on: Mar 18, 2021
  *      Author: austinwright
  */
-
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include "board.h"
-#include "peripherals.h"
-#include "pin_mux.h"
-#include "clock_config.h"
-#include "MKL46Z4.h"
-#include "fsl_debug_console.h"
 #include "fsl_device_registers.h"
 
 

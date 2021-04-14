@@ -15,6 +15,7 @@
 #include "fsl_debug_console.h"
 #include "fsl_device_registers.h"
 #include "frdm_general_peripherals.h"
+#include "snake_game_logic.h"
 
 /* -----------------------------------------------------------------*/
 /* 	Setup LEDs
@@ -32,7 +33,7 @@ void Enable_LEDS(){
 /* 	Setup switches
 /* -----------------------------------------------------------------*/
 
-void Enable_SW(){
+void Inti_SW(){
 	int switchVal[4] = { 4, 5, 12, 13 };
 	SIM->SCGC5 |= (1 << 11);
 	for (int i = 0; i < 4; i++) {
@@ -40,6 +41,15 @@ void Enable_SW(){
 		PORTA->PCR[switchVal[i]] |= 0xF0703 & ((0xA << 16) | (1 << 8) | 0x3);
 	}
 }
+
+/* -----------------------------------------------------------------*/
+/* 	Setup switches
+/* -----------------------------------------------------------------*/
+void Enable_PIT(){
+	SIM->SCGC6 |= (1<<23);	//Clock gate the PIT
+
+}
+
 
 
 /* -----------------------------------------------------------------*/
@@ -133,3 +143,35 @@ void blinkChoosenLED(int index) {
 	}
 	delay_ms(166);
 }
+
+/* -----------------------------------------------------------------*/
+/* 	Interrupt function Port A (button switches interupt)
+/* -----------------------------------------------------------------*/
+void PORTA_IRQHandler(void) {
+	printf("\nInterupt Called");
+	int choosen = -1;
+	// Clear ISF register bit (pg 194)
+	PORTA->PCR[4] |= (1 << 24);
+	PORTA->PCR[5] |= (1 << 24);
+	PORTA->PCR[12] |= (1 << 24);
+	PORTA->PCR[13] |= (1 << 24);
+	// Return current switch values
+	int S1 = GPIOA->PDIR & (1 << 4);
+	int S2 = GPIOA->PDIR & (1 << 5);
+	int S3 = GPIOA->PDIR & (1 << 12);
+	int S4 = GPIOA->PDIR & (1 << 13);
+	//Select chosen value
+	if (S1 == 0 | S2 == 0 | S3 == 0 | S4 == 0) {
+		//playGame();
+	}
+}
+
+/* -----------------------------------------------------------------*/
+/* 	Interrupt function Port A (button switches interupt)
+/* -----------------------------------------------------------------*/
+void PIT_IRQHandler(void){
+
+}
+
+
+

@@ -8,7 +8,7 @@
 /********************************************************************/
 
 
-void SPI_init(void){
+void init_SPI(void){
 
 	//Enable Clock gating
     SIM->SCGC5 |= (1<<12);     	//Enable Port D clock
