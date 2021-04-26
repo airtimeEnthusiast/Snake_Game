@@ -4,11 +4,19 @@
  *  Created on: Mar 23, 2021
  *      Author: austinwright
  */
-#include "snake_game_logic.h"
 #include "frdm_general_peripherals.h"
+#include "snake_queue.h"
+/* snake directions */
+uint8_t DIRECTION  = 1;
+uint8_t PREV_DIRECT = 1;
+
+/* Current Position */
+uint8_t xCur;
+uint8_t yCur;
+
 /* -----------------------------------------------------------------*/
 /* 	Setup LEDs
- /* -----------------------------------------------------------------*/
+/* -----------------------------------------------------------------*/
 void init_LEDS() {
 
 	int blinkVal[4] = { 0, 4, 6, 7 };
@@ -149,8 +157,76 @@ void blinkChoosenLED(int index) {
 	delay_ms(166);
 }
 /* -----------------------------------------------------------------*/
+/* 	Draw a 3 by 3 box at the center of x, and y, enable is 1 for write
+/*  and 0 for clear
+/* -----------------------------------------------------------------*/
+void Draw_Segment(uint8_t x, uint8_t y, uint8_t enable, int direction){
+
+	Set_Pixel(x,y,enable); 				//	center
+	Set_Pixel(x,y + 1,enable);			//	center bottom
+	Set_Pixel(x,y - 1,enable); 			//	center top
+	Set_Pixel(x - 1,y,enable);			//	center left
+	Set_Pixel(x + 1,y,enable); 			//	center right
+}
+/* -----------------------------------------------------------------*/
+/* 	Draw a 3 by 3 box at the center of x, and y, enable is 1 for write
+/*  and 0 for clear
+/* -----------------------------------------------------------------*/
+void move(){
+
+	switch (getDirection()) {
+	case 1:
+		// Move Left
+		printf("\nLeft");
+		xCur--;
+		break;
+	case 2:
+		// Move Up
+		printf("\nUp");
+		yCur--;
+		break;
+	case 3:
+		// Move Down
+		printf("\nDown");
+		yCur++;
+		break;
+	case 4:
+		// Move Right
+		printf("\nRight");
+		xCur++;
+		break;
+	default:
+		printf("Error unassigned value: %d");
+	}
+}
+/* -----------------------------------------------------------------*/
+/* 	Interrupt function PIT (pixel timing interrupt)
+/* -----------------------------------------------------------------*/
+void PIT_IRQHandler(void) {
+	if (PIT->CHANNEL[0].TFLG) { 		//Timer 0 triggered
+		PIT->CHANNEL[0].TFLG = 1;		//Reset Flag
+
+		//Check if snake eats a fruit
+			//Grow snake
+		//if(yCur < 0 | yCur > 47){
+		//	yCur = 0;
+		//}
+		//if(xCur < 0 | xCur > 83){
+		//	xCur = 0;
+		//}
+
+		insert(xCur,yCur);
+		Draw_Segment(xCur,yCur,1,getDirection());
+		move();
+
+		if(getItemCount() == 16){
+			removeTail();
+		}
+	}
+}
+/* -----------------------------------------------------------------*/
 /* 	Interrupt function Port A (button switches interupt)
- /* -----------------------------------------------------------------*/
+/* -----------------------------------------------------------------*/
 void PORTA_IRQHandler(void) {
 	int delay_count = 0;
 	while(buttonPressed() == -1 && delay_count < 10){
@@ -159,7 +235,6 @@ void PORTA_IRQHandler(void) {
 	}
 	delay_ms(20);
 
-	//printf("\nInterupt Called");
 	// Clear ISF register bit (pg 194)
 	PORTA->PCR[4] |= (1 << 24);
 	PORTA->PCR[5] |= (1 << 24);
@@ -170,18 +245,23 @@ void PORTA_IRQHandler(void) {
 	int S2 = GPIOA->PDIR & (1 << 5);
 	int S3 = GPIOA->PDIR & (1 << 12);
 	int S4 = GPIOA->PDIR & (1 << 13);
+	PREV_DIRECT = getDirection();
 	//Select chosen value
-	if (S1 == 0) {
+	if (S1 == 0) {			// Move Left
 		blinkChoosenLED(1);
+		DIRECTION = 1;
 	}
-	if (S2 == 0) {
+	if (S2 == 0) {			// Move Up
 		blinkChoosenLED(2);
+		DIRECTION = 2;
 	}
-	if (S3 == 0) {
+	if (S3 == 0) {			// Move Down
 		blinkChoosenLED(3);
+		DIRECTION = 3;
 	}
-	if (S4 == 0) {
+	if (S4 == 0) {			// Move Right
 		blinkChoosenLED(4);
+		DIRECTION = 4;
 	}
 }
 /* -----------------------------------------------------------------*/
@@ -190,21 +270,9 @@ void PORTA_IRQHandler(void) {
 void analogRandomSeed() {
 
 }
-
 /* -----------------------------------------------------------------*/
 /* 	Interrupt function PIT (pixel timing interupt)
- /* -----------------------------------------------------------------*/
-void PIT_IRQHandler(void) {
-	if (PIT->CHANNEL[0].TFLG) { 		//Timer 0 triggered
-		PIT->CHANNEL[0].TFLG = 1;	//Reset Flag
-
-		blinkChoosenLED(4);
-	}
-
-}
 /* -----------------------------------------------------------------*/
-/* 	Interrupt function PIT (pixel timing interupt)
- /* -----------------------------------------------------------------*/
 int buttonPressed() {
 	// Return current switch values
 	int S1 = GPIOA->PDIR & (1 << 4);
@@ -219,4 +287,18 @@ int buttonPressed() {
 		return -1;
 	}
 }
-
+/* -----------------------------------------------------------------*/
+/* 	Interrupt function Port A (button switches interrupt)
+/* -----------------------------------------------------------------*/
+void init_Snake(int direction){
+	//Initialize snake queue
+	intialize_queue();
+	xCur = 47;
+	yCur = 24;
+}
+/* -----------------------------------------------------------------*/
+/* 	get Direction
+/* -----------------------------------------------------------------*/
+int getDirection(){
+	return DIRECTION;
+}

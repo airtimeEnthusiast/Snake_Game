@@ -72,7 +72,7 @@ void init_5110(){
 	delay_ms(1);
 
 	//Set VOP contrast
-	SPI_transmit(0x10);
+	SPI_transmit(0xC0);
 	delay_ms(1);
 
 	//Set normal instruction mode

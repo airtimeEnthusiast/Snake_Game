@@ -18,7 +18,7 @@
 #include "MKL46Z4.h"
 #include "fsl_debug_console.h"
 #include "fsl_device_registers.h"
-#include "snake_game_logic.h"
+#include "fsl_common.h"
 
 void init_LEDS();
 

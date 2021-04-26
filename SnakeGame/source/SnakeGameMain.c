@@ -34,8 +34,7 @@ When integrating system modules
 #include "frdm_general_peripherals.h"
 #include "frdm_spi.h"
 #include "nokia_display.h"
-#include "snake_game_logic.h"
-#include "snake_buffer.h"
+#include "snake_queue.h"
 /* -----------------------------------------------------------------*/
 /* 	main function
 /* -----------------------------------------------------------------*/
@@ -52,16 +51,17 @@ int main (void)
     init_SW();		//Initialize Buttons
     init_PIT();		//Initialize Periodic Interrupt Timer
 
+    //dummyQueue_Test();
+    //dummyPixel_Test();
+
+
     STOP_PIT();		//Stop PIT for clean setup
     START_PIT();	//Enable PIT functionality
 
-    init_Snake();	//Load snake into a buffer
+    init_Snake(1);
 
     while(1){}
 
-    return 0;
-
-    //dummyPixel_Test();
 
     return 0;
 }
@@ -86,6 +86,24 @@ void dummyPixel_Test(){
 	printf("\npixel val %d",Get_Pixel(83,11));
 }
 
-
+void dummyQueue_Test(){
+	intialize_queue();
+	insert(2,3);
+	insert(2,4);
+	insert(2,5);
+	insert(2,6);
+	insert(2,7);
+	print();
+	removeTail();
+	print();
+	removeTail();
+	print();
+	removeTail();
+	print();
+	removeTail();
+	print();
+	removeTail();
+	print();
+}
 
 
