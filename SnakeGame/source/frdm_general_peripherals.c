@@ -1,11 +1,11 @@
 /*
+ * Austin Wright 4-25-21
+ * Project 5 CSE 325: Snake Game
  * frdm_general_peripherals.c
- *
- *  Created on: Mar 23, 2021
- *      Author: austinwright
  */
 #include "frdm_general_peripherals.h"
 #include "snake_queue.h"
+
 /* snake directions */
 uint8_t DIRECTION  = 1;
 uint8_t PREV_DIRECT = 1;
@@ -19,8 +19,8 @@ uint8_t yCur;
 /* -----------------------------------------------------------------*/
 void init_LEDS() {
 
-	int blinkVal[4] = { 0, 4, 6, 7 };
-	SIM->SCGC5 |= (1 << 11);
+	int blinkVal[4] = { 0, 4, 6, 7 };	//Port C values
+	SIM->SCGC5 |= (1 << 11);			//Enable Port C LEDs
 	for (int i = 0; i < 4; i++) {
 		PORTC->PCR[blinkVal[i]] &= ~0x700;
 		PORTC->PCR[blinkVal[i]] |= 0x700 & (1 << 8);
@@ -34,10 +34,11 @@ void init_LEDS() {
 }
 /* -----------------------------------------------------------------*/
 /* 	Setup switches
- /* -----------------------------------------------------------------*/
+/* -----------------------------------------------------------------*/
 void init_SW() {
 	//Enable TL100E Switches as interrupts
 	int switchVal[4] = { 4, 5, 12, 13 };
+	//SIM->SCGC5 |= (1 << 9);			//Enable Port A Switches
 	for (int i = 0; i < 4; i++) {
 		PORTA->PCR[switchVal[i]] &= ~0xF0703; //Safety Mask
 		PORTA->PCR[switchVal[i]] |= 0xF0703 & ((0xA << 16) | (1 << 8) | 0x3);
@@ -48,14 +49,14 @@ void init_SW() {
 }
 /* -----------------------------------------------------------------*/
 /* 	Setup PIT
- /* -----------------------------------------------------------------*/
+/* -----------------------------------------------------------------*/
 void init_PIT() {
 	SIM->SCGC6 |= (1 << 23);	//Clock gate the PIT
 
 }
 /* -----------------------------------------------------------------*/
 /* 	Stop PIT
- /* -----------------------------------------------------------------*/
+/* -----------------------------------------------------------------*/
 void STOP_PIT() {
 	//Disable Timer 0 and shun interrupts requests
 	PIT->CHANNEL[0].TCTRL = 0x00;
@@ -63,7 +64,7 @@ void STOP_PIT() {
 }
 /* -----------------------------------------------------------------*/
 /* 	Start PIT
- /* -----------------------------------------------------------------*/
+/* -----------------------------------------------------------------*/
 void START_PIT() {
 	//Enable PIT Timers and debug mode
 	PIT->MCR = 0x00;
@@ -74,57 +75,10 @@ void START_PIT() {
 	//Enable Timer 0 and accept interrupts requests
 	PIT->CHANNEL[0].TCTRL = 0x3; //12MHZ
 }
-/* -----------------------------------------------------------------*/
-/* 	Blink sequence when the player cannot orient the board in time
- /* -----------------------------------------------------------------*/
 
-void blinkLoseSequence() {
-	GPIOC->PDOR |= (1 << 0) | (1 << 4) | (1 << 6) | (1 << 7);
-	delay_ms(1000);
-	GPIOC->PDOR &= ~(1 << 0) & ~(1 << 4) & ~(1 << 6) & ~(1 << 7);
-	delay_ms(10);
-}
-/* -----------------------------------------------------------------*/
-/* 	Blink sequence when the player orients the board in time
- /* -----------------------------------------------------------------*/
-void blinkWinSequence() {
-	int count = 0;
-	while (count < 3) {			//blink 3 times in a one second interval
-		GPIOC->PDOR |= (1 << 0) | (1 << 4) | (1 << 6) | (1 << 7);
-		delay_ms(167);
-		GPIOC->PDOR &= ~(1 << 0) & ~(1 << 4) & ~(1 << 6) & ~(1 << 7);
-		delay_ms(166);
-		count++;
-	}
-}
-/* -----------------------------------------------------------------*/
-/* 	Blink LEDs based on a given angle
- /* -----------------------------------------------------------------*/
-void blinkAngleLEDs(int angle) {
-	for (int i = 0; i < 3; i++) {
-		if (angle == 90) {
-			blinkChoosenLED(1);
-		} else if (angle == 60) {
-			blinkChoosenLED(1);
-			blinkChoosenLED(2);
-		} else if (angle == 30) {
-			blinkChoosenLED(2);
-		} else if (angle == 0) {
-			blinkChoosenLED(2);
-			blinkChoosenLED(3);
-		} else if (angle == -30) {
-			blinkChoosenLED(3);
-		} else if (angle == -60) {
-			blinkChoosenLED(3);
-			blinkChoosenLED(4);
-		} else if (angle == -90) {
-			blinkChoosenLED(4);
-		}
-	}
-}
 /* -----------------------------------------------------------------*/
 /* 	Blink Chosen LED
- /* -----------------------------------------------------------------*/
+/* -----------------------------------------------------------------*/
 void blinkChoosenLED(int index) {
 	switch (index) {
 	//Blink LED 1
@@ -157,10 +111,9 @@ void blinkChoosenLED(int index) {
 	delay_ms(166);
 }
 /* -----------------------------------------------------------------*/
-/* 	Draw a 3 by 3 box at the center of x, and y, enable is 1 for write
-/*  and 0 for clear
+/* 	Draw a segment of the snake
 /* -----------------------------------------------------------------*/
-void Draw_Segment(uint8_t x, uint8_t y, uint8_t enable, int direction){
+void Draw_Segment(uint8_t x, uint8_t y, uint8_t enable){
 
 	Set_Pixel(x,y,enable); 				//	center
 	Set_Pixel(x,y + 1,enable);			//	center bottom
@@ -170,7 +123,6 @@ void Draw_Segment(uint8_t x, uint8_t y, uint8_t enable, int direction){
 }
 /* -----------------------------------------------------------------*/
 /* 	Draw a 3 by 3 box at the center of x, and y, enable is 1 for write
-/*  and 0 for clear
 /* -----------------------------------------------------------------*/
 void move(){
 
@@ -216,7 +168,7 @@ void PIT_IRQHandler(void) {
 		//}
 
 		insert(xCur,yCur);
-		Draw_Segment(xCur,yCur,1,getDirection());
+		Draw_Segment(xCur,yCur,1);
 		move();
 
 		if(getItemCount() == 16){
@@ -225,7 +177,7 @@ void PIT_IRQHandler(void) {
 	}
 }
 /* -----------------------------------------------------------------*/
-/* 	Interrupt function Port A (button switches interupt)
+/* Interrupt for the switches on Port A
 /* -----------------------------------------------------------------*/
 void PORTA_IRQHandler(void) {
 	int delay_count = 0;
@@ -264,14 +216,9 @@ void PORTA_IRQHandler(void) {
 		DIRECTION = 4;
 	}
 }
-/* -----------------------------------------------------------------*/
-/* 	Interrupt function Port A (button switches interupt)
- /* -----------------------------------------------------------------*/
-void analogRandomSeed() {
 
-}
 /* -----------------------------------------------------------------*/
-/* 	Interrupt function PIT (pixel timing interupt)
+/* 	If a button is pressed
 /* -----------------------------------------------------------------*/
 int buttonPressed() {
 	// Return current switch values
@@ -288,7 +235,7 @@ int buttonPressed() {
 	}
 }
 /* -----------------------------------------------------------------*/
-/* 	Interrupt function Port A (button switches interrupt)
+/* 	Initialize the snake
 /* -----------------------------------------------------------------*/
 void init_Snake(int direction){
 	//Initialize snake queue

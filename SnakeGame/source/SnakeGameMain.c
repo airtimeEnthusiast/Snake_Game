@@ -1,9 +1,7 @@
 /*
- * Austin Wright 3-26-21
- * Project 4 CSE 325: Balance Game
- * FRDM project which uses the MMA845 on board accelerometer to measure the angle the MCU is held at
- * Unfortunately, I was unable to complete the project and get the I2C to work proporly. I have defined
- * auxiliary game functions as well as a way to read the accelerometer data
+ * Austin Wright 4-25-21
+ * Project 5 CSE 325: Snake Game
+ * FRDM project uses the SPI interface to communicate with the Nokia 5110 to display a simple snake game.
 
  The buttons and LEDs are configured with GPIO with the following register bits:
  LED1: Port A bit 4
@@ -23,12 +21,8 @@ When integrating system modules
   *Enable Port Data Direction
   *Enable Enable System Module
 
-
- */
-
-
 /**
- * @file    StopLightGameMain.c
+ * @file    SnakeGameMain.c
  * @brief   Application entry point.
  */
 #include "frdm_general_peripherals.h"
@@ -51,20 +45,18 @@ int main (void)
     init_SW();		//Initialize Buttons
     init_PIT();		//Initialize Periodic Interrupt Timer
 
-    //dummyQueue_Test();
-    //dummyPixel_Test();
-
-
     STOP_PIT();		//Stop PIT for clean setup
     START_PIT();	//Enable PIT functionality
 
-    init_Snake(1);
+    init_Snake(1);	//Place snake into the display
 
     while(1){}
 
-
     return 0;
 }
+/* -----------------------------------------------------------------*/
+/* 	Dummy pixel test
+/* -----------------------------------------------------------------*/
 void dummyPixel_Test(){
 	for (int j = 0; j < 12; j++) {
 		for (int i = 0; i < 83; i++) {
@@ -85,7 +77,9 @@ void dummyPixel_Test(){
 	printf("\npixel val %d",Get_Pixel(2,2));
 	printf("\npixel val %d",Get_Pixel(83,11));
 }
-
+/* -----------------------------------------------------------------*/
+/* 	Dummy queue test
+/* -----------------------------------------------------------------*/
 void dummyQueue_Test(){
 	intialize_queue();
 	insert(2,3);
@@ -105,5 +99,3 @@ void dummyQueue_Test(){
 	removeTail();
 	print();
 }
-
-

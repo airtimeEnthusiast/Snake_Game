@@ -1,12 +1,7 @@
 /*
+ * Austin Wright 4-25-21
+ * Project 5 CSE 325: Snake Game
  * nokia_display.c
- *
- *  Created on: Mar 19, 2021
- *      Author: austinwright
- *
- *      NOTES:
- *
-		//SPI_transmit(0x14);	//Recommended Bias of 0x04
  */
 #include "nokia_display.h"
 #include "frdm_spi.h"
@@ -54,7 +49,7 @@ uint8_t d_buffer[LCDWIDTH * LCDHEIGHT] = {
 };
 
 /* -----------------------------------------------------------------
- * Initialize this bad@$$ Nokia display
+ * Initialize this Nokia display
 /* -----------------------------------------------------------------*/
 void init_5110(){
 
@@ -87,7 +82,7 @@ void init_5110(){
 	Clear_Entire_Display();
 }
 /* -----------------------------------------------------------------*/
-/* 	Select a bank based on y coordinate range!
+/* 	Select a bank based on y coordinate range
 /* -----------------------------------------------------------------*/
 int Bank_Select(int yCoord){
 	if(yCoord < 8  && yCoord >= 0) { 	 return 0; }
@@ -98,7 +93,7 @@ int Bank_Select(int yCoord){
 	else if(yCoord < 48 && yCoord >= 40){ return 5; }
 }
 /* -----------------------------------------------------------------*/
-/* 	Select a bank based on y coordinate range!
+/* 	Print the buffer within the display
 /* -----------------------------------------------------------------*/
 void Print_buffer(){
 	for(int j = 0 ; j < 6 ; j++){
@@ -109,7 +104,7 @@ void Print_buffer(){
 	}
 }
 /* -----------------------------------------------------------------*/
-/* 	Set a pixel man!
+/* 	Set an individual pixel
 /* -----------------------------------------------------------------*/
 void Set_Pixel(int x, int y, int enable){
 	//The value to be set into the display buffer
@@ -155,7 +150,7 @@ int Get_Pixel(int x, int y){
 	return (_BV(y % 8) & d_buffer[x + (y / 8) * LCDWIDTH]) >> (y % 8);  //return the desired pixel value
 }
 /* -----------------------------------------------------------------*/
-/* 	Clean them artifacts man
+/* 	Clean the entire display
 /* -----------------------------------------------------------------*/
 void Clear_Entire_Display(){
 
@@ -190,7 +185,7 @@ void RES_Pulse(){
 	delay_ms(1);
 }
 /* -----------------------------------------------------------------*/
-/* 	Apply RES pulse 8.1 Figure 13
+/* 	Apply Reset Serial 8.1 Figure 13
 /* -----------------------------------------------------------------*/
 void Reset_Serial(){
 	//Reset Serial Bus
@@ -202,6 +197,9 @@ void Reset_Serial(){
     delay_ms(1);
 }
 
+/* -----------------------------------------------------------------*/
+/* 	Home the curser address
+/* -----------------------------------------------------------------*/
 void Zero_Cursor_Address(){
 	//Reset Cursor Address to (0,0)
 	GPIOD->PDOR &= ~(1<<7);

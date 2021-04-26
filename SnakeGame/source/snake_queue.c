@@ -1,8 +1,7 @@
 /*
+ * Austin Wright 4-25-21
+ * Project 5 CSE 325: Snake Game
  * snake_queue.c
- *
- *  Created on: Apr 19, 2021
- *      Author: austinwright
  */
 #include "frdm_general_peripherals.h"
 #include "snake_queue.h"
@@ -14,26 +13,16 @@ int itemCount = 0;
 int front = 0;
 int rear = -1;
 
-uint8_t peekX() {
-   return snake[front].x;
-}
-
-uint8_t peekY(){
-	return snake[front].y;
-}
-
-bool isEmpty() {
-   return itemCount == 0;
-}
-
+/* -----------------------------------------------------------------*/
+/* 	Determine if the snake queue is full
+/* -----------------------------------------------------------------*/
 bool isFull() {
    return itemCount == MAX;
 }
 
-int size() {
-   return itemCount;
-}
-
+/* -----------------------------------------------------------------*/
+/* Initialize the queue to it's max size
+/* -----------------------------------------------------------------*/
 void intialize_queue(){
 	for(int i = 0 ; i < MAX; i++){
 		snake[i].x = -1;
@@ -41,6 +30,9 @@ void intialize_queue(){
 	}
 }
 
+/* -----------------------------------------------------------------*/
+/* 	Insert a new section into the queue
+/* -----------------------------------------------------------------*/
 void insert(int x, int y) {
 
    if(!isFull()) {
@@ -58,9 +50,12 @@ void insert(int x, int y) {
    }
 }
 
+/* -----------------------------------------------------------------*/
+/* 	Remove the tail section
+/* -----------------------------------------------------------------*/
 void removeTail() {
 	//insert queue in direction
-	Draw_Segment(snake[front].x,snake[front].y,0,getDirection());
+	Draw_Segment(snake[front].x,snake[front].y,0);
 
 	snake[front].x = -1;
 	snake[front].y = -1;
@@ -72,20 +67,9 @@ void removeTail() {
    itemCount--;
 }
 
-void removeHead() {
-	//remove "head" of the snake
-	Draw_Segment(snake[rear].x,snake[rear].y,0,getDirection());
-
-	snake[rear].x = -1;
-	snake[rear].y = -1;
-	if(itemCount == 0) {
-		front = 0;
-	}
-	rear--;
-	itemCount--;
-}
-
-
+/* -----------------------------------------------------------------*/
+/* 	Print the sections
+/* -----------------------------------------------------------------*/
 void print(){
 	printf("\nitems: %d", itemCount);
 	int i = front;
@@ -95,6 +79,9 @@ void print(){
 	}
 }
 
+/* -----------------------------------------------------------------*/
+/* 	Get the current number of items
+/* -----------------------------------------------------------------*/
 int getItemCount(){
 	return itemCount;
 }

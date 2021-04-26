@@ -1,8 +1,7 @@
 /*
- * frdm_accel.h
- *
- *  Created on: Mar 19, 2021
- *      Author: austinwright
+ * Austin Wright 4-25-21
+ * Project 5 CSE 325: Snake Game
+ * nokia_display.h
  */
 
 #ifndef NOKIA_DISPLAY_H_
@@ -23,43 +22,42 @@
 void init_5110();
 
 /* -----------------------------------------------------------------*/
-/* 	Initialize the PCD8544 on-board display chip. See the Nokia5110
- *  Data sheet for section and page reference
- *  See Page 15 of the Nokia data sheet for Intialization steps
+/* 	Select a bank based on y coordinate range
 /* -----------------------------------------------------------------*/
+
 int Bank_Select(int yCoord);
 /* -----------------------------------------------------------------*/
-/* 	Initialize the PCD8544 on-board display chip. See the Nokia5110
- *  Data sheet for section and page reference
- *  See Page 15 of the Nokia data sheet for Intialization steps
+/* 	Print the buffer within the display
+/* -----------------------------------------------------------------*/
+void Print_buffer();
+
+/* -----------------------------------------------------------------*/
+/*	Set an individual pixel
 /* -----------------------------------------------------------------*/
 void Set_Pixel(int x, int y, int enable);
 
 /* -----------------------------------------------------------------*/
-/* 	Initialize the PCD8544 on-board display chip. See the Nokia5110
- *  Data sheet for section and page reference
- *  See Page 15 of the Nokia data sheet for Intialization steps
+/* 	Returns 1 if a pixel is enabled and 0 if it is disabled
+/* -----------------------------------------------------------------*/
+int Get_Pixel(int x, int y);
+
+/* -----------------------------------------------------------------*/
+/* 	Clean the entire display
 /* -----------------------------------------------------------------*/
 void Clear_Entire_Display();
 
 /* -----------------------------------------------------------------*/
-/* 	Initialize the PCD8544 on-board display chip. See the Nokia5110
- *  Data sheet for section and page reference
- *  See Page 15 of the Nokia data sheet for Intialization steps
+/* 	Apply RES pulse 8.1 Figure 13
 /* -----------------------------------------------------------------*/
 void RES_Pulse();
 
 /* -----------------------------------------------------------------*/
-/* 	Initialize the PCD8544 on-board display chip. See the Nokia5110
- *  Data sheet for section and page reference
- *  See Page 15 of the Nokia data sheet for Intialization steps
+/* Apply RES pulse 8.1 Figure 12
 /* -----------------------------------------------------------------*/
 void Reset_Serial();
 
 /* -----------------------------------------------------------------*/
-/* 	Initialize the PCD8544 on-board display chip. See the Nokia5110
- *  Data sheet for section and page reference
- *  See Page 15 of the Nokia data sheet for Intialization steps
+/* Home the cursor
 /* -----------------------------------------------------------------*/
 void Zero_Cursor_Address();
 

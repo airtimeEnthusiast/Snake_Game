@@ -1,12 +1,13 @@
+/*
+ * Austin Wright 4-25-21
+ * Project 5 CSE 325: Snake Game
+ * frdm_spi.c
+ */
+#include "frdm_spi.h"
 
 /* -----------------------------------------------------------------*/
 /* 	Intialize SPI0
 /* -----------------------------------------------------------------*/
-
-#include "frdm_spi.h"
-/********************************************************************/
-
-
 void init_SPI(void){
 
 	//Enable Clock gating
@@ -36,16 +37,22 @@ void init_SPI(void){
     SPI1->BR = (8<<4) | (2<<0); 	//6.67 KHZ
 
 }
+/* -----------------------------------------------------------------*/
+/* 	Return the SPI Transmit Buffer Empty Flag
+/* -----------------------------------------------------------------*/
 int isTransmitFlagEmpty(){
-	return (SPI1->S && (1<<5));
+	return (SPI1->S && (1<<5));	//Return the SPI1 SPTEF
 }
 
+/* -----------------------------------------------------------------*/
+/* 	Send a byte the display through the SPI data low register
+/* -----------------------------------------------------------------*/
 void SPI_transmit(uint8_t byte){
-   while(!isTransmitFlagEmpty()){
+   while(!isTransmitFlagEmpty()){	//Wait for the transmission completion
 	   printf("\nBRUHH u stuck");
    }
    SPI1->DL = byte;
-   delay_ms(1);	//wait for byte to set in
+   delay_ms(1);		//wait for byte to set into the DL
 }
 
 /* -----------------------------------------------------------------*/
