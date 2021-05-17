@@ -122,13 +122,15 @@ void Set_Pixel(int x, int y, int enable){
 
 	//disable bit map buffer pixel
 	else{
-		bitValue = (_BV(y % 8) ^ d_buffer[x + (y / 8) * LCDWIDTH]); //Bank value OR buffer
+		//bitValue = (_BV(y % 8) ^ d_buffer[x + (y / 8) * LCDWIDTH]); //Bank value XOR buffer
+		bitValue = !(_BV(y % 8) || d_buffer[x + (y / 8) * LCDWIDTH]); //Bank value Inverse OR buffer
 	}
 
 	//Set bit value within the display buffer
 	d_buffer[x + (y / 8) * LCDWIDTH] = bitValue;
 
 	//Command mode
+	/*
 	GPIOD->PDOR &= ~(1<<7);
 
 	//Given the pixel value calculate the cursor address
@@ -137,7 +139,7 @@ void Set_Pixel(int x, int y, int enable){
 
 	//write pixel into display
 	GPIOD->PDOR |= (1<<7);
-	SPI_transmit(bitValue);
+	SPI_transmit(bitValue);*/
 }
 /* -----------------------------------------------------------------*/
 /* 	Returns 1 if a pixel is enabled and 0 if it is disabled
@@ -195,6 +197,22 @@ void Reset_Serial(){
 	delay_ms(1);
     GPIOD->PDOR |= (1<<4); 	//RST (RES) High
     delay_ms(1);
+}
+/* -----------------------------------------------------------------*/
+/* 	Refresh Display
+/* -----------------------------------------------------------------*/
+void Refresh_Display(){
+	for(int i = 0 ; i < LCDWIDTH * LCDHEIGHT ; i++){
+		GPIOD->PDOR &= ~(1<<7);
+
+			//Given the pixel value calculate the cursor address
+			SPI_transmit(0x80 + x);					//offset x address
+			SPI_transmit(0x40 + Bank_Select(y));	//offset y address
+
+			//write pixel into display
+			GPIOD->PDOR |= (1<<7);
+			SPI_transmit(bitValue);
+	}
 }
 
 /* -----------------------------------------------------------------*/
