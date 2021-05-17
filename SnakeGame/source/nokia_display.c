@@ -129,6 +129,7 @@ void Set_Pixel(int x, int y, int enable){
 	//Set bit value within the display buffer
 	d_buffer[x + (y / 8) * LCDWIDTH] = bitValue;
 
+
 	//Command mode
 	/*
 	GPIOD->PDOR &= ~(1<<7);
